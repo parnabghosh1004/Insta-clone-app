@@ -1,21 +1,22 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useState, useContext, useRef } from 'react'
 import { UserContext } from '../../App'
-import Modal from 'react-modal'
 import M from 'materialize-css'
 
 function MyProfile(props) {
 
     const [myPosts, setMyPosts] = useState(null)
     const [postDetails, setPostDetails] = useState({})
-    const [model1, setModel1] = useState(false)
-    const [model2, setModel2] = useState(false)
     const [image, setImage] = useState(null)
     const [url, setUrl] = useState("")
     const [imgId, setImgId] = useState("")
     const [preloader, setPreloader] = useState(true)
     const { state, dispatch } = useContext(UserContext)
+    const modal1 = useRef(null)
+    const modal2 = useRef(null)
 
     useEffect(() => {
+        M.Modal.init(modal1.current)
+        M.Modal.init(modal2.current)
         fetch(`/myposts`, {
             headers: {
                 "Authorization": `Bearer ${localStorage.getItem('jwt')}`
@@ -49,8 +50,6 @@ function MyProfile(props) {
                 .then(result => {
                     M.toast({ html: result.message, classes: "#43a047 green darken-1 rounded custom-toast" })
                     document.getElementById('uploadImage').value = ""
-                    // setMode
-                    // window.location.reload()
                 })
         }
     }, [imgId, url])
@@ -71,7 +70,6 @@ function MyProfile(props) {
             .then(res => res.json())
             .then(post => {
                 setPostDetails(post.post)
-                setModel2(true)
             })
             .catch(e => console.log(e))
     }
@@ -126,7 +124,7 @@ function MyProfile(props) {
                 <div>
                     {
                         state && myPosts ?
-                            <img className="hoverable" style={{ width: "200px", height: "200px", borderRadius: "100px", marginTop: "10%", cursor: "pointer" }} src={state.pic} alt="pic" onClick={() => setModel1(true)} /> : ""
+                            <img className="hoverable modal-trigger" data-target="modal2" style={{ width: "200px", height: "200px", borderRadius: "100px", marginTop: "10%", cursor: "pointer" }} src={state.pic} alt="pic" /> : ""
                     }
                 </div>
                 <div>
@@ -142,64 +140,72 @@ function MyProfile(props) {
                         : <h5>Loading...!</h5>}
                 </div>
             </div>
-            <h3>My Posts</h3><br />
+            {state && myPosts ? <h3>My Posts</h3> : ""}<br />
 
-            <Modal isOpen={model1} ariaHideApp={false} style={{ overlay: { width: "76 %", margin: "auto", height: "75%" } }}>
-                <div className="row valign-wrapper" style={{ width: "50%", height: "60%" }}>
-                    <div className="col s12 m8" style={{ margin: "3% auto" }}>
-                        <div className="card" style={{ padding: "1.5%" }}>
-                            <div className="card-image">
-                                <img src={state ? state.pic : ""} alt="pic" />
+            <div id="modal2" className="modal modal-fixed-footer" ref={modal1}>
+                <div className="modal-content">
+                    <div className="row valign-wrapper" style={{ width: "50%", height: "60%" }}>
+                        <div className="col s12 m8" style={{ margin: "3% auto" }}>
+                            <div className="card" style={{ padding: "1.5%" }}>
+                                <div className="card-image">
+                                    <img src={state ? state.pic : ""} alt="pic" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="file-field input-field">
+                        <div className="btn #311b92 deep-purple darken-4">
+                            <span>Upload pic</span>
+                            <input type="file" onChange={e => setImage(e.target.files[0])} />
+                        </div>
+                        <div className="file-path-wrapper">
+                            <input id="uploadImage" className="file-path validate" type="text" placeholder="" />
+                        </div>
+                    </div>
+                    <button className="btn waves-effect waves-light #311b92 deep-purple darken-4" style={{ display: "block", margin: "4px auto" }} name="action" onClick={() => updateProfilePic()}>Update Profile pic</button>
+                </div>
+                <div className="modal-footer">
+                    <a href="#!" className="modal-close waves-effect waves-green btn-flat">Close</a>
+                </div>
+            </div>
+
+            <div id="modal3" className="modal modal-fixed-footer" ref={modal2} style={{ width: "62%" }}>
+                <div className="modal-content">
+                    <i className="material-icons hovorable" style={{ float: "right", cursor: "pointer" }} onClick={handleDeletePost}>delete</i>
+                    <div className="row valign-wrapper" >
+                        <div className="col s12 m8" style={{ margin: "3% auto" }}>
+                            <div className="card " style={{ padding: "1.5%" }}>
+                                <div className="card-image">
+                                    <img src={postDetails.pic} alt="pic" />
+                                </div>
+                                <div className="card-content">
+                                    <span className="card-title"><b>{postDetails.title}</b></span>
+                                    <p>{postDetails.body}</p>
+                                    <p className="right-align"> ~ {postDetails.postedBy ? postDetails.postedBy.name : ""}</p><br />
+                                    <h6>{postDetails.likes ? postDetails.likes.length : ""} likes</h6>
+                                    {postDetails.comments ?
+                                        postDetails.comments.map(c => {
+                                            return (
+                                                <h6 key={c._id}><span style={{ fontWeight: '100', marginRight: '2%' }}>~ {c.postedBy.name}</span>{c.text}</h6>
+                                            )
+                                        })
+                                        : ""
+                                    }
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div className="file-field input-field">
-                    <div className="btn #311b92 deep-purple darken-4">
-                        <span>Upload pic</span>
-                        <input type="file" onChange={e => setImage(e.target.files[0])} />
-                    </div>
-                    <div className="file-path-wrapper">
-                        <input id="uploadImage" className="file-path validate" type="text" placeholder="" />
-                    </div>
+                <div className="modal-footer">
+                    <a href="#!" className="modal-close waves-effect waves-green btn-flat">Close</a>
                 </div>
-                <button className="btn waves-effect waves-light #311b92 deep-purple darken-4" style={{ display: "block", margin: "4px auto" }} name="action" onClick={() => updateProfilePic()}>Update Profile pic</button>
-                <button className="btn waves-effect waves-light #311b92 deep-purple darken-4" style={{ display: "block", margin: "4px auto" }} name="action" onClick={() => setModel1(false)}>Close</button>
-            </Modal>
-
-            <Modal isOpen={model2} ariaHideApp={false}>
-                <i className="material-icons hovorable" style={{ float: "right", cursor: "pointer" }} onClick={handleDeletePost}>delete</i>
-                <div className="row valign-wrapper" >
-                    <div className="col s12 m8" style={{ margin: "3% auto" }}>
-                        <div className="card " style={{ padding: "1.5%" }}>
-                            <div className="card-image">
-                                <img src={postDetails.pic} alt="pic" />
-                            </div>
-                            <div className="card-content">
-                                <span className="card-title"><b>{postDetails.title}</b></span>
-                                <p>{postDetails.body}</p>
-                                <p className="right-align"> ~ {postDetails.postedBy ? postDetails.postedBy.name : ""}</p><br />
-                                <h6>{postDetails.likes ? postDetails.likes.length : ""} likes</h6>
-                                {postDetails.comments ?
-                                    postDetails.comments.map(c => {
-                                        return (
-                                            <h6 key={c._id}><span style={{ fontWeight: '100', marginRight: '2%' }}>~ {c.postedBy.name}</span>{c.text}</h6>
-                                        )
-                                    })
-                                    : ""
-                                }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <button key={3} className="btn waves-effect waves-light #311b92 deep-purple darken-4" style={{ display: "block", margin: "0px auto" }} name="action" onClick={() => setModel2(false)}>Close</button>
-            </Modal>
+            </div>
             <div className='gallery'>
                 {
                     !preloader ?
                         myPosts.length ?
                             myPosts.map(post => {
-                                return <img key={post._id} className="item hoverable" src={post.pic} alt={post.title} onClick={e => clickHandler(e.target.src)} />
+                                return <img key={post._id} className="item hoverable modal-trigger" data-target="modal3" src={post.pic} alt={post.title} onClick={e => clickHandler(e.target.src)} />
                             }) : <p style={{ display: "block", width: "max-content", marginTop: "-80%", marginLeft: "30%" }}>You don't have any posts right now !</p>
                         : <div className="preloader-wrapper big active">
                             <div className="spinner-layer spinner-blue">

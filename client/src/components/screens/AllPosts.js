@@ -92,7 +92,7 @@ function AllPosts() {
                                 commentHandler={makeComment} comments={item.comments} />
                         )
                     })
-                    : <h2 className="center-align">You are not following anyone ..!</h2>
+                    : <h2 className="center-align">No posts available ..!</h2>
                 : <div className="progress">
                     <div className="indeterminate"></div>
                 </div>

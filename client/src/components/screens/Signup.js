@@ -48,7 +48,7 @@ function Signup() {
 
         if (name && email && password) {
 
-            if (!/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(email)) return M.toast({ html: "Invalid email type!", classes: "#c62828 red darken-3 rounded" })
+            if (!/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(email)) return M.toast({ html: "Invalid Email", classes: "#c62828 red darken-3 rounded custom-toast" })
 
             if (image) {
                 const data = new FormData()
@@ -85,17 +85,17 @@ function Signup() {
                 <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
                 <div className="file-field input-field">
                     <div className="btn #311b92 deep-purple darken-4">
-                        <span>File</span>
+                        <span>Add Profile pic</span>
                         <input type="file" onChange={e => setImage(e.target.files[0])} />
                     </div>
                     <div className="file-path-wrapper">
-                        <input className="file-path validate" type="text" placeholder="Profile pic (Optional)" />
+                        <input className="file-path validate" type="text" placeholder="(Optional)" />
                     </div>
                 </div>
-                <button className="btn waves-effect waves-light #311b92 deep-purple darken-4" type="submit" name="action" onClick={postData}>Signup</button>
+                <button className="btn waves-effect waves-light #311b92 deep-purple darken-4" type="submit" name="action" onClick={postData}>Signup</button><br /><br />
                 <h6>
                     Already have an account?
-                    <Link to="/login"> sigin</Link>
+                    <Link to="/login"> Signin</Link>
                 </h6>
             </div>
         </div>

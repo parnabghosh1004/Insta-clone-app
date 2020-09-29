@@ -3,13 +3,13 @@ const router = express.Router()
 const mongoose = require('mongoose')
 const requireLogin = require('../middleware/requireLogin')
 const Post = mongoose.model("Post")
-const cloudinary = require('cloudinary').v2
+const { CLOUDINARY } = require('../config/keys')
 
 cloudinary.config({
-    cloud_name: 'instaimagesparnab',
-    api_key: '633854716324753',
-    api_secret: 'OAlI6RKFmiauVj32b91tu3wUkpw',
-    upload_preset: 'insta-clone'
+    cloud_name: CLOUDINARY.CLOUD_NAME,
+    api_key: CLOUDINARY.API_KEY,
+    api_secret: CLOUDINARY.API_SECRET,
+    upload_preset: CLOUDINARY.UPLOAD_PRESET
 })
 
 router.post('/createpost', requireLogin, (req, res) => {
@@ -34,7 +34,10 @@ router.post('/createpost', requireLogin, (req, res) => {
 })
 
 router.get('/allposts', requireLogin, (req, res) => {
-    Post.find().populate("postedBy", "_id name").populate("comments.postedBy", "_id name")
+    Post.find()
+        .populate("postedBy", "_id name")
+        .populate("comments.postedBy", "_id name")
+        .sort('-createdAt')
         .then(posts => {
             res.json({ posts })
         }).catch(e => {
@@ -45,6 +48,7 @@ router.get('/allposts', requireLogin, (req, res) => {
 router.get('/myFollowingPosts', requireLogin, (req, res) => {
     Post.find({ postedBy: { $in: req.user.following } })
         .populate("postedBy", "_id name").populate("comments.postedBy", "_id name")
+        .sort('-createdAt')
         .then(posts => {
             res.json({ posts })
         }).catch(e => {

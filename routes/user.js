@@ -5,12 +5,13 @@ const requireLogin = require('../middleware/requireLogin')
 const Post = mongoose.model("Post")
 const User = mongoose.model("User")
 const cloudinary = require('cloudinary').v2
+const { CLOUDINARY } = require('../config/keys')
 
 cloudinary.config({
-    cloud_name: 'instaimagesparnab',
-    api_key: '633854716324753',
-    api_secret: 'OAlI6RKFmiauVj32b91tu3wUkpw',
-    upload_preset: 'insta-clone'
+    cloud_name: CLOUDINARY.CLOUD_NAME,
+    api_key: CLOUDINARY.API_KEY,
+    api_secret: CLOUDINARY.API_SECRET,
+    upload_preset: CLOUDINARY.UPLOAD_PRESET
 })
 
 router.get('/user/:Id', requireLogin, (req, res) => {
@@ -25,6 +26,26 @@ router.get('/user/:Id', requireLogin, (req, res) => {
                 })
         })
         .catch(e => res.status(404).json({ error: "User not found" }))
+})
+
+router.post('/followers/:Id', requireLogin, (req, res) => {
+    User.findOne({ _id: req.params.Id })
+        .select('followers')
+        .populate('followers', '_id name pic')
+        .then(user => {
+            res.json(user)
+        })
+        .catch(e => console.log(e))
+})
+
+router.post('/following/:Id', requireLogin, (req, res) => {
+    User.findOne({ _id: req.params.Id })
+        .select('following')
+        .populate('following', '_id name pic')
+        .then(user => {
+            res.json(user)
+        })
+        .catch(e => console.log(e))
 })
 
 router.put('/follow', requireLogin, (req, res) => {
@@ -84,5 +105,16 @@ router.put('/updatepic', requireLogin, (req, res) => {
         }
     )
 })
+
+router.post('/search-users', (req, res) => {
+    let searchPattern = new RegExp(`^${req.body.query}`)
+    User.find({ name: { $regex: searchPattern } })
+        .select('_id name pic')
+        .then(users => {
+            res.json({ users })
+        })
+        .catch(e => console.log(e))
+})
+
 
 module.exports = router

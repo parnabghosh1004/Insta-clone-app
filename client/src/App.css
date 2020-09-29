@@ -66,3 +66,7 @@ input:focus {
   margin: auto;
   height: 100%;
 }
+
+.collection-item{
+  width: 100%;
+}
