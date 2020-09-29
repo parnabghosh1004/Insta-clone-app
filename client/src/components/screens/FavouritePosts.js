@@ -7,11 +7,13 @@ function AllPosts() {
     const [preload, setPreload] = useState(true)
 
     useEffect(() => {
-        fetch(`/allposts`, {
+
+        fetch(`/favouriteposts`, {
             method: 'post',
             headers: {
-                "Authorization": `Bearer ${localStorage.getItem("jwt")}`
-            }
+                "Authorization": `Bearer ${localStorage.getItem("jwt")}`,
+            },
+
         }).then(res => res.json())
             .then(result => {
                 setData(result.posts)
@@ -90,10 +92,10 @@ function AllPosts() {
                     data.map(item => {
                         return (
                             <PostLayout key={item._id} itemId={item._id} title={item.title} body={item.body} postedBy={item.postedBy} imgUrl={item.pic} likes={item.likes} likeHandler={likePost} unlikeHandler={unlikePost}
-                                commentHandler={makeComment} comments={item.comments} />
+                                commentHandler={makeComment} comments={item.comments} favourite={true} />
                         )
                     })
-                    : <h2 className="center-align">No posts available ..!</h2>
+                    : <h2 className="center-align">No favourite posts ..!</h2>
                 : <div className="progress">
                     <div className="indeterminate"></div>
                 </div>

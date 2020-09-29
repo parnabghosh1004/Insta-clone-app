@@ -86,6 +86,42 @@ router.put('/unfollow', requireLogin, (req, res) => {
     )
 })
 
+router.put('/addtofavourites', requireLogin, (req, res) => {
+    User.findByIdAndUpdate(req.user._id, {
+        $push: { favourites: req.body.postId },
+    }, { new: true, useFindAndModify: false },
+        (e, result) => {
+            if (e) return res.status(422).json({ error: e })
+            res.json(result)
+        }
+    )
+})
+
+router.put('/removefromfavourites', requireLogin, (req, res) => {
+    User.findByIdAndUpdate(req.user._id, {
+        $pull: { favourites: req.body.postId },
+    }, { new: true, useFindAndModify: false },
+        (e, result) => {
+            if (e) return res.status(422).json({ error: e })
+            res.json(result)
+        }
+    )
+        .populate("favourites.postedBy", "_id name pic")
+        .populate("", "_id name pic")
+})
+
+router.post('/favouriteposts', requireLogin, (req, res) => {
+    Post.find({ _id: req.user.favourites })
+        .populate("postedBy", "_id name pic")
+        .populate("comments.postedBy", "_id name pic")
+        .sort('-createdAt')
+        .then(posts => {
+            res.json({ posts })
+        }).catch(e => {
+            console.log(e)
+        })
+})
+
 router.put('/updatepic', requireLogin, (req, res) => {
 
     if (req.body.curr_pic_id !== "default") {
@@ -107,7 +143,7 @@ router.put('/updatepic', requireLogin, (req, res) => {
 })
 
 router.post('/search-users', (req, res) => {
-    let searchPattern = new RegExp(`^${req.body.query}`)
+    let searchPattern = new RegExp(`^${req.body.query}`, 'i')
     User.find({ name: { $regex: searchPattern } })
         .select('_id name pic')
         .then(users => {
@@ -115,6 +151,7 @@ router.post('/search-users', (req, res) => {
         })
         .catch(e => console.log(e))
 })
+
 
 
 module.exports = router

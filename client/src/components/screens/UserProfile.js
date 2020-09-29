@@ -111,7 +111,7 @@ function UserProfile(props) {
                 <div>
                     {
                         user.pic && userPosts ?
-                            <img className="hoverable modal-trigger" data-target="modal4" style={{ width: "200px", height: "200px", borderRadius: "100px", marginTop: "10%", cursor: "pointer" }} src={user.pic} alt="pic" /> : ""
+                            <img className="hoverable modal-trigger" data-target="modal4" style={{ width: "200px", height: "200px", borderRadius: "100px", marginTop: "10%", cursor: "pointer", border: "4px solid" }} src={user.pic} alt="pic" /> : ""
                     }
                 </div>
                 <div>

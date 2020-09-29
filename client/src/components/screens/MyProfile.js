@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext, useRef } from 'react'
 import { UserContext } from '../../App'
 import M from 'materialize-css'
+import { Link } from 'react-router-dom'
 
 function MyProfile(props) {
 
@@ -124,7 +125,7 @@ function MyProfile(props) {
                 <div>
                     {
                         state && myPosts ?
-                            <img className="hoverable modal-trigger" data-target="modal2" style={{ width: "200px", height: "200px", borderRadius: "100px", marginTop: "10%", cursor: "pointer" }} src={state.pic} alt="pic" /> : ""
+                            <img className="hoverable modal-trigger" data-target="modal2" style={{ width: "200px", height: "200px", borderRadius: "100px", marginTop: "10%", cursor: "pointer", border: "4px solid" }} src={state.pic} alt="pic" /> : ""
                     }
                 </div>
                 <div>
@@ -133,8 +134,8 @@ function MyProfile(props) {
                             <h4>{state.name}</h4>
                             <div style={{ display: "flex", flexDirection: "column" }}>
                                 {myPosts.length === 1 ? <h5>{myPosts.length} post </h5> : <h5>{myPosts.length} posts</h5>}
-                                {<h5>{state.followers.length} followers</h5>}
-                                {<h5>{state.following.length} following</h5>}
+                                {<h5><Link to={`/profile/${state._id}/followers`}>{state.followers.length} followers</Link></h5>}
+                                {<h5><Link to={`/profile/${state._id}/following`}>{state.following.length} following</Link></h5>}
                             </div>
                         </>
                         : <h5>Loading...!</h5>}

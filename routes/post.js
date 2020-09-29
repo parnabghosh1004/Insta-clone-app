@@ -34,10 +34,10 @@ router.post('/createpost', requireLogin, (req, res) => {
 
 })
 
-router.get('/allposts', requireLogin, (req, res) => {
+router.post('/allposts', requireLogin, (req, res) => {
     Post.find()
-        .populate("postedBy", "_id name")
-        .populate("comments.postedBy", "_id name")
+        .populate("postedBy", "_id name pic")
+        .populate("comments.postedBy", "_id name pic")
         .sort('-createdAt')
         .then(posts => {
             res.json({ posts })
@@ -48,7 +48,7 @@ router.get('/allposts', requireLogin, (req, res) => {
 
 router.get('/myFollowingPosts', requireLogin, (req, res) => {
     Post.find({ postedBy: { $in: req.user.following } })
-        .populate("postedBy", "_id name").populate("comments.postedBy", "_id name")
+        .populate("postedBy", "_id name pic").populate("comments.postedBy", "_id name pic")
         .sort('-createdAt')
         .then(posts => {
             res.json({ posts })
@@ -58,7 +58,7 @@ router.get('/myFollowingPosts', requireLogin, (req, res) => {
 })
 
 router.get('/myposts', requireLogin, (req, res) => {
-    Post.find({ postedBy: req.user._id }).populate("postedBy", "_id name")
+    Post.find({ postedBy: req.user._id }).populate("postedBy", "_id name pic")
         .then(myposts => {
             res.json({ myposts })
         }).catch(e => {
@@ -71,8 +71,8 @@ router.put('/like', requireLogin, (req, res) => {
         $push: { likes: req.user._id }
     }, { new: true, useFindAndModify: false }
     )
-        .populate("postedBy", "_id name")
-        .populate("comments.postedBy", "_id name")
+        .populate("postedBy", "_id name pic")
+        .populate("comments.postedBy", "_id name pic")
         .exec((e, result) => {
             if (e) return res.status(422).json({ error: e })
             res.json(result)
@@ -84,8 +84,8 @@ router.put('/unlike', requireLogin, (req, res) => {
         $pull: { likes: req.user._id }
     }, { new: true, useFindAndModify: false }
     )
-        .populate("postedBy", "_id name")
-        .populate("comments.postedBy", "_id name")
+        .populate("postedBy", "_id name pic")
+        .populate("comments.postedBy", "_id name pic")
         .exec((e, result) => {
             if (e) return res.status(422).json({ error: e })
             return res.json(result)
@@ -103,8 +103,8 @@ router.put('/comment', requireLogin, (req, res) => {
         $push: { comments: comment }
     }, { new: true, useFindAndModify: false }
     )
-        .populate("postedBy", "_id name")
-        .populate("comments.postedBy", "_id name")
+        .populate("postedBy", "_id name pic")
+        .populate("comments.postedBy", "_id name pic")
         .exec((e, result) => {
             if (e) return res.status(422).json({ error: e })
             return res.json(result)
@@ -114,8 +114,8 @@ router.put('/comment', requireLogin, (req, res) => {
 router.post('/fetchthepost', requireLogin, (req, res) => {
 
     Post.findOne({ pic: req.body.imgUrl })
-        .populate("postedBy", "_id name")
-        .populate("comments.postedBy", "_id name")
+        .populate("postedBy", "_id name pic")
+        .populate("comments.postedBy", "_id name pic")
         .then(post => {
             res.json({ post })
         })
@@ -124,7 +124,7 @@ router.post('/fetchthepost', requireLogin, (req, res) => {
 
 router.delete('/deletepost/:postId', requireLogin, (req, res) => {
     Post.findOne({ _id: req.params.postId })
-        .populate("postedBy", '_id ')
+        .populate("postedBy", '_id')
         .exec((e, post) => {
             if (e) return res.status(422).json({ error: e })
             post.remove()

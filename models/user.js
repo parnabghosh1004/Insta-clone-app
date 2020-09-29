@@ -25,7 +25,8 @@ const userSchema = new mongoose.Schema({
         default: 'default'
     },
     followers: [{ type: ObjectId, ref: "User" }],
-    following: [{ type: ObjectId, ref: "User" }]
+    following: [{ type: ObjectId, ref: "User" }],
+    favourites: [{ type: ObjectId, ref: "Post" }]
 })
 
 mongoose.model("User", userSchema)

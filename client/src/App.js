@@ -15,6 +15,7 @@ import ResetPassword from './components/screens/ResetPassword';
 import NewPassword from './components/screens/NewPassword';
 import Followers from './components/screens/Followers';
 import Following from './components/screens/Following';
+import FavouritePosts from './components/screens/FavouritePosts';
 
 export const UserContext = createContext()
 
@@ -50,6 +51,9 @@ const Routing = () => {
         </Route>
         <Route exact path="/profile">
           <MyProfile text="profile" />
+        </Route>
+        <Route exact path="/favouriteposts">
+          <FavouritePosts />
         </Route>
         <Route exact path="/profile/:userId">
           <UserProfile />

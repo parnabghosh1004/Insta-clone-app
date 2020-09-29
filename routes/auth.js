@@ -75,8 +75,8 @@ router.post('/signin', (req, res) => {
         bcrypt.compare(password, savedUser.password).then(doMatch => {
             if (doMatch) {
                 const token = jwt.sign({ _id: savedUser._id }, JWT_SECRET)
-                const { _id, name, email, followers, following, pic, pic_id } = savedUser
-                return res.json({ token, user: { _id, name, email, followers, following, pic, pic_id } })
+                const { _id, name, email, followers, following, pic, pic_id, favourites } = savedUser
+                return res.json({ token, user: { _id, name, email, followers, following, pic, pic_id, favourites } })
             }
             return res.status(422).json({ error: "Wrong username or password" })
         })
