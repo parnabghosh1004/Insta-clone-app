@@ -39,8 +39,8 @@ function Navbar() {
 
         else {
             return [
-                <li key={1}><Link to="/signin">Signin</Link></li>,
-                <li key={2}><Link to="/signup">Signup</Link></li>
+                <li key={1}><Link to="/signin" onClick={() => closeSideNav()}>Signin</Link></li>,
+                <li key={2}><Link to="/signup" onClick={() => closeSideNav()}>Signup</Link></li>
             ]
         }
     }
