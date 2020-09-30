@@ -21,14 +21,18 @@ function Navbar() {
         dispatch({ type: 'CLEAR' })
     }
 
+    const closeSideNav = () => {
+        M.Sidenav.getInstance(sideNav.current).close()
+    }
+
     const renderList = () => {
         if (state) {
             return [
                 <li key={0}><i className="material-icons modal-trigger" data-target="modal1" style={{ color: 'black', cursor: 'pointer' }} >search</i></li>,
-                <li key={1}><Link to="/allposts">All posts</Link></li>,
-                <li key={2}><Link to="/favouriteposts">Favourite posts</Link></li>,
-                <li key={3}><Link to="/profile">My Profile</Link></li>,
-                <li key={4}><Link to="/createPost">Create Post</Link></li>,
+                <li key={1}><Link to="/allposts" onClick={() => closeSideNav()}>All posts</Link></li>,
+                <li key={2}><Link to="/favouriteposts" onClick={() => closeSideNav()}>Favourite posts</Link></li>,
+                <li key={3}><Link to="/profile" onClick={() => closeSideNav()}>My Profile</Link></li>,
+                <li key={4}><Link to="/createPost" onClick={() => closeSideNav()}>Create Post</Link></li>,
                 <li key={5}><Link to="/signin" onClick={logout}>Logout</Link></li>
             ]
         }
@@ -79,6 +83,7 @@ function Navbar() {
                                         <img src={user.pic} alt="pic" style={{ width: '6%', height: '2.4rem', borderRadius: "50%", border: "2px solid" }} />
                                         <Link to={user._id === state._id ? `/profile` : `/profile/${user._id}`} onClick={() => {
                                             M.Modal.getInstance(searchModal.current).close()
+                                            M.Sidenav.getInstance(sideNav.current).close()
                                             setSearch('')
                                             setUsers([])
                                         }} style={{ display: "inline", fontSize: '1.2rem' }}>{user.name}</Link></li>
